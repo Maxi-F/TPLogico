@@ -25,9 +25,9 @@ esFiel(Personaje) :-
 	length(Parejas, 1).
 
 %CasoBase	
-acataOrden(Empleado, Empleador) :-
+acataOrden(Empleador, Empleado) :-
 	trabajaPara(Empleador, Empleado).
 %CasoRecursivo
-acataOrden(Empleado, Empleador) :-
+acataOrden(Empleador, Empleado) :-
 	trabajaPara(Superior, Empleado),
 	acataOrden(Empleador, Superior).
