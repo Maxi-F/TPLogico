@@ -14,14 +14,14 @@ trabajaPara(bianca, george).
 trabajaPara(charo, george).
 
 saleCon(Quien, Con) :-
-	Pareja(Quien, Con).
+	pareja(Quien, Con).
 saleCon(Quien, Con) :-
-	Pareja(Con, Quien).
+	pareja(Con, Quien).
 	
 
 esFiel(Personaje) :-
-	SaleCon(Personaje, _),
-	findall(Pareja, SaleCon(Pareja, Personaje), Parejas),
+	saleCon(Personaje, _),
+	findall(Pareja, saleCon(Pareja, Personaje), Parejas),
 	length(Parejas, 1).
 
 %CasoBase	
