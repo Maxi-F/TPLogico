@@ -45,6 +45,7 @@ amigo(vincent, jules).
 amigo(jules, jimmie).
 amigo(vincent, elVendedor).
 
+
 %----------PARTE 1----------
 
 saleCon(Quien, Con):-
