@@ -46,7 +46,6 @@
 %	            /           _|_         \ 
 %	            `--._____,-'   `-.___,-' 
 %	
-
 %-----BASE DE CONOCIMIENTO-----
 
 %pareja(UnaPersona, OtraPersona)
@@ -59,10 +58,11 @@ pareja(bernardo, charo).
 trabajaPara(marsellus, vincent).
 trabajaPara(marsellus, jules).
 trabajaPara(marsellus, winston).
-trabajaPara(vincent, bernardo).
-trabajaPara(winston, bernardo).
-trabajaPara(bianca, george).
-trabajaPara(charo, george).
+trabajaPara(Quien, bernardo) :-
+	trabajaPara(marsellus, Quien),
+	Quien \= jules.
+trabajaPara(Quien, george) :-
+	saleCon(bernardo, Quien).
 
 %personaje(Nombre, Ocupacion)
 personaje(pumkin, ladron([estacionesDeServicio, licorerias])).
@@ -104,8 +104,12 @@ saleCon(Quien, Con):-
 
 esFiel(Personaje):-
 	saleCon(Personaje, _),
-	findall(Pareja, saleCon(Pareja, Personaje), Parejas),
-	length(Parejas, 1).
+	not(esInfiel(Personaje)).
+
+esInfiel(Personaje) :-
+	saleCon(Personaje, Persona1),
+	saleCon(Personaje, Persona2),
+	Persona1 \= Persona2.
 
 %CasoBase
 acataOrden(Empleador, Empleado):-
@@ -118,75 +122,81 @@ acataOrden(Empleador, Empleado):-
 
 %----------PARTE 2----------
 
-esPeligroso(Personaje):-
+esPeligroso(Personaje) :-
 	tieneJefePeligroso(Personaje).
-esPeligroso(Personaje):-
+esPeligroso(Personaje) :-
+	haceActividadPeligrosa(Personaje).
+
+haceActividadPeligrosa(Personaje) :-
 	personaje(Personaje, mafioso(maton)).
-esPeligroso(Personaje):-
+haceActividadPeligrosa(Personaje) :-
 	personaje(Personaje, ladron(LugaresRobados)),
 	member(licorerias, LugaresRobados).
-tieneJefePeligroso(Personaje):-
+
+tieneJefePeligroso(Personaje) :-
 	trabajaPara(Jefe, Personaje),
 	esPeligroso(Jefe).
 
-tieneCerca(Persona, OtraPersona):-
-	amigo(Persona, OtraPersona).
-tieneCerca(Persona, OtraPersona):-
-	amigo(OtraPersona, Persona).
-tieneCerca(Persona, OtraPersona):-
-	trabajaPara(Persona, OtraPersona).
-tieneCerca(Persona, OtraPersona):-
-	trabajaPara(OtraPersona, Persona).
-
-sanCayetano(Persona):-
+sanCayetano(Persona) :-
 	tieneCerca(Persona, _),
 	forall(tieneCerca(Persona, OtraPersona), encargo(Persona, OtraPersona, _)).
 
-nivelRespeto(Personaje, Nivel):-
+tieneCerca(Persona, OtraPersona) :-
+	amigo(Persona, OtraPersona).
+tieneCerca(Persona, OtraPersona) :-
+	amigo(OtraPersona, Persona).
+tieneCerca(Persona, OtraPersona) :-
+	trabajaPara(Persona, OtraPersona).
+tieneCerca(Persona, OtraPersona) :-
+	trabajaPara(OtraPersona, Persona).	
+--------------
+
+
+nivelRespeto(Personaje, Nivel) :-
 	personaje(Personaje, actriz(Peliculas)),
 	length(Peliculas, Cantidad),
 	Nivel is (Cantidad/10).
-nivelRespeto(Personaje, 10):-
+nivelRespeto(Personaje, 10) :-
 	personaje(Personaje, mafioso(resuelveProblemas)).
-nivelRespeto(Personaje, 20):-
+nivelRespeto(Personaje, 20) :-
 	personaje(Personaje, mafioso(capo)).
 nivelRespeto(vincent, 15).
 
-respetable(Personaje):-
+respetable(Personaje) :-
 	nivelRespeto(Personaje, Nivel),
 	Nivel>9.
 
-noRespetable(Personaje):-
+noRespetable(Personaje) :-
 	nivelRespeto(Personaje, Nivel),
-	Nivel<9.
-noRespetable(Personaje):-
+	Nivel<=9.
+noRespetable(Personaje) :-
 	personaje(Personaje, ladron(_)).
-noRespetable(Personaje):-
+noRespetable(Personaje) :-
 	personaje(Personaje, mafioso(maton)),
 	Personaje \= vincent.
-noRespetable(Personaje):-
+noRespetable(Personaje) :-
 	personaje(Personaje, boxeador).
-noRespetable(Personaje):-
+noRespetable(Personaje) :-
 	personaje(Personaje, mafioso(cerebro)).
-noRespetable(Personaje):-
+noRespetable(Personaje) :-
 	personaje(Personaje, vender(_)).
 	
-respetabilidad(Respetables, NoRespetables):-
+respetabilidad(Respetables, NoRespetables) :-
 	findall(Personaje, respetable(Personaje), ListaRespetables),
 	length(ListaRespetables, Respetables),
 	findall(Personaje, noRespetable(Personaje), ListaNoRespetables),
 	length(ListaNoRespetables, NoRespetables).
 	
-cantidadEncargos(Personaje, CantidadEncargos):-
+cantidadEncargos(Personaje, CantidadEncargos) :-
 	personaje(Personaje, _),
 	findall(Encargo, encargo(_, Personaje, Encargo), ListaEncargos),
 	length(ListaEncargos, CantidadEncargos).
 	
-tieneMasCantidadDeEncargosQue(Personaje, OtroPersonaje):-
+tieneMasCantidadDeEncargosQue(Personaje, OtroPersonaje) :-
 	cantidadEncargos(Personaje, UnaCantidadEncargos),
 	cantidadEncargos(OtroPersonaje, OtraCantidadEncargos),
 	UnaCantidadEncargos >= OtraCantidadEncargos.
 
-masAtareado(Personaje):-
+masAtareado(Personaje) :-
 	personaje(Personaje, _),
 	forall(personaje(OtroPersonaje, _), tieneMasCantidadDeEncargosQue(Personaje, OtroPersonaje)).
