@@ -168,7 +168,7 @@ respetable(Personaje) :-
 
 noRespetable(Personaje) :-
 	nivelRespeto(Personaje, Nivel),
-	Nivel<=9.
+	Nivel=<9.
 noRespetable(Personaje) :-
 	personaje(Personaje, ladron(_)).
 noRespetable(Personaje) :-
